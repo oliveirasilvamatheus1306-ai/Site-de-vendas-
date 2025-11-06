@@ -4,31 +4,53 @@
     "name": "AK-47 | Redline",
     "rarity": "Classified",
     "price": 72.50,
-    "image": "",
-    "desc": "AK-47 | Redline — acabamento vermelho e preto. Vendedor: SkinShop."
+    "image": "https://via.placeholder.com/300x200?text=AK-47+Redline",
+    "desc": "AK-47 | Redline — acabamento vermelho e preto. Popular entre jogadores profissionais."
   },
   {
     "id": "awp-asimov",
     "name": "AWP | Asiimov",
     "rarity": "Covert",
     "price": 240.00,
-    "image": "",
-    "desc": "AWP | Asiimov — acabamento futurista em branco e laranja."
+    "image": "https://via.placeholder.com/300x200?text=AWP+Asiimov",
+    "desc": "AWP | Asiimov — acabamento futurista branco e laranja com detalhes em preto."
   },
   {
     "id": "m4a4-howl",
     "name": "M4A4 | Howl",
     "rarity": "Contraband",
     "price": 650.00,
-    "image": "",
-    "desc": "M4A4 | Howl — skin rara e muito procurada."
+    "image": "https://via.placeholder.com/300x200?text=M4A4+Howl",
+    "desc": "M4A4 | Howl — uma das skins mais raras e desejadas de Counter-Strike."
   },
   {
-    "id": "mp9-rose",
-    "name": "MP9 | Rose Iron",
+    "id": "usp-kill-confirmed",
+    "name": "USP-S | Kill Confirmed",
+    "rarity": "Covert",
+    "price": 310.00,
+    "image": "https://via.placeholder.com/300x200?text=USP-S+Kill+Confirmed",
+    "desc": "USP-S | Kill Confirmed — estilo policial com balas e caveiras animadas."
+  },
+  {
+    "id": "deagle-hypnotic",
+    "name": "Desert Eagle | Hypnotic",
+    "rarity": "Restricted",
+    "price": 180.00,
+    "image": "https://via.placeholder.com/300x200?text=Deagle+Hypnotic",
+    "desc": "Desert Eagle | Hypnotic — acabamento metálico espiralado, hipnótico e luxuoso."
+  },
+  {
+    "id": "mp9-bioleak",
+    "name": "MP9 | Bioleak",
     "rarity": "Mil-Spec",
-    "price": 6.90,
-    "image": "",
-    "desc": "MP9 | Rose Iron — entrada acessível com bom visual."
-  }
-]
+    "price": 45.90,
+    "image": "https://via.placeholder.com/300x200?text=MP9+Bioleak",
+    "desc": "MP9 | Bioleak — design biológico em verde e preto, ótima opção custo-benefício."
+  },
+  {
+    "id": "p90-death-by-kitty",
+    "name": "P90 | Death by Kitty",
+    "rarity": "Classified",
+    "price": 95.00,
+    "image": "https://via.placeholder.com/300x200?text=P90+Death+by+Kitty",
+    "desc": "P90 | Death by Kitty — uma skin
