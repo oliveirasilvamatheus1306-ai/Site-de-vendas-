@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SkinShop CS — Skins de Counter-Strike</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="description" content="Loja de skins de Counter-Strike — catálogo, carrinho e checkout simulado." />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1 class="logo">SkinShop CS</h1>
+      <nav>
+        <button id="btn-catalog" class="nav-btn">Catálogo</button>
+        <button id="btn-cart" class="nav-btn">Carrinho <span id="cart-count" class="badge">0</span></button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container main-grid">
+    <section id="catalog" class="catalog">
+      <div class="toolbar">
+        <input id="search" type="search" placeholder="Buscar skin..." />
+        <select id="filter-rarity">
+          <option value="">Todas raridades</option>
+          <option value="Mil-Spec">Mil-Spec</option>
+          <option value="Restricted">Restricted</option>
+          <option value="Classified">Classified</option>
+          <option value="Covert">Covert</option>
+          <option value="Contraband">Contraband</option>
+        </select>
+      </div>
+      <div id="product-list" class="product-list">
+        <!-- cards serão injetados por script -->
+      </div>
+    </section>
+
+    <aside id="cart" class="cart">
+      <h2>Carrinho</h2>
+      <div id="cart-items" class="cart-items"></div>
+      <div class="cart-summary">
+        <div>Subtotal: <strong id="subtotal">R$ 0,00</strong></div>
+        <div>Frete: <strong id="shipping">R$ 0,00</strong></div>
+        <div class="total">Total: <strong id="total">R$ 0,00</strong></div>
+      </div>
+
+      <h3>Checkout</h3>
+      <form id="checkout-form" class="checkout-form">
+        <label>Nome
+          <input type="text" id="buyer-name" required />
+        </label>
+        <label>Email
+          <input type="email" id="buyer-email" required />
+        </label>
+        <label>Método de pagamento
+          <select id="payment-method" required>
+            <option value="">Escolha</option>
+            <option value="pix">PIX (instruções após pedido)</option>
+            <option value="paypal">PayPal</option>
+            <option value="transfer">Transferência bancária</option>
+          </select>
+        </label>
+        <button type="submit" class="btn-primary">Finalizar pedido (simulado)</button>
+      </form>
+
+      <div id="order-result" class="order-result" aria-live="polite"></div>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>© <span id="year"></span> SkinShop CS — Loja fictícia para demonstração. Verifique regras do Steam/Valve antes de comercializar.</small>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
