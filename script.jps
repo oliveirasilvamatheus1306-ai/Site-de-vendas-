@@ -1,265 +1,104 @@
-// script.js
-// Loja estática com carrinho em localStorage
-const PRODUCTS_URL = 'products.json';
-
-let products = [];
-let cart = {}; // { productId: qty }
-
-const $ = sel => document.querySelector(sel);
-const $$ = sel => Array.from(document.querySelectorAll(sel));
-
-document.addEventListener('DOMContentLoaded', init);
-
-function init(){
-  $('#year').textContent = new Date().getFullYear();
-  loadProducts();
-  setupUI();
-  loadCartFromStorage();
-  renderCart();
-}
-
-function setupUI(){
-  $('#btn-catalog').addEventListener('click', () => scrollToSection('#catalog'));
-  $('#btn-cart').addEventListener('click', () => scrollToSection('#cart'));
-  $('#search').addEventListener('input', renderProducts);
-  $('#filter-rarity').addEventListener('change', renderProducts);
-  $('#checkout-form').addEventListener('submit', handleCheckout);
-}
-
-function scrollToSection(sel){
-  const el = document.querySelector(sel);
-  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-async function loadProducts(){
-  try {
-    const resp = await fetch(PRODUCTS_URL);
-    products = await resp.json();
-  } catch(e){
-    console.error('Erro carregando products.json', e);
-    products = [];
+// ============================
+// 🔫 DADOS DOS PRODUTOS
+// ============================
+const products = [
+  {
+    id: 1,
+    name: "AK-47 | Fire Serpent",
+    rarity: "Covert",
+    price: 1450.00,
+    image: "https://example.com/fire-serpent.jpg"
+  },
+  {
+    id: 2,
+    name: "AWP | Dragon Lore",
+    rarity: "Covert",
+    price: 8900.00,
+    image: "https://example.com/dragon-lore.jpg"
+  },
+  {
+    id: 3,
+    name: "M4A4 | Desolate Space",
+    rarity: "Classified",
+    price: 380.00,
+    image: "https://example.com/desolate-space.jpg"
+  },
+  {
+    id: 4,
+    name: "USP-S | Kill Confirmed",
+    rarity: "Covert",
+    price: 950.00,
+    image: "https://example.com/kill-confirmed.jpg"
+  },
+  {
+    id: 5,
+    name: "Glock-18 | Fade",
+    rarity: "Restricted",
+    price: 240.00,
+    image: "https://example.com/glock-fade.jpg"
+  },
+  {
+    id: 6,
+    name: "Desert Eagle | Blaze",
+    rarity: "Classified",
+    price: 720.00,
+    image: "https://example.com/deagle-blaze.jpg"
   }
-  renderProducts();
-}
+];
 
-function renderProducts(){
-  const list = $('#product-list');
-  list.innerHTML = '';
-  const q = $('#search').value.trim().toLowerCase();
-  const rarity = $('#filter-rarity').value;
+// ============================
+// 🎨 FUNÇÃO PARA EXIBIR PRODUTOS
+// ============================
+function displayProducts(list) {
+  const productList = document.getElementById("product-list");
+  productList.innerHTML = ""; // limpa o conteúdo anterior
 
-  const filtered = products.filter(p => {
-    if(rarity && p.rarity !== rarity) return false;
-    if(q && !(p.name.toLowerCase().includes(q) || (p.desc && p.desc.toLowerCase().includes(q)))) return false;
-    return true;
-  });
-
-  if(filtered.length === 0){
-    list.innerHTML = `<div style="color:var(--muted);padding:20px">Nenhum produto encontrado</div>`;
+  if (list.length === 0) {
+    productList.innerHTML = "<p class='no-results'>Nenhuma skin encontrada 😢</p>";
     return;
   }
 
-  filtered.forEach(p => {
-    const card = document.createElement('article');
-    card.className = 'card';
+  list.forEach(product => {
+    const card = document.createElement("div");
+    card.classList.add("product-card");
+
     card.innerHTML = `
-      <div class="thumb" data-id="${p.id}">
-        ${p.image ? `<img src="${p.image}" alt="${escapeHtml(p.name)}">` : `<div style="text-align:center;padding:8px"><strong>${escapeHtml(p.name)}</strong><div style="font-size:12px;color:var(--muted);margin-top:6px">${escapeHtml(p.rarity)}</div></div>`}
-      </div>
-      <h3>${escapeHtml(p.name)}</h3>
-      <div class="meta">${escapeHtml(p.rarity)}</div>
-      <div class="price">R$ ${formatPrice(p.price)}</div>
-      <div class="actions">
-        <button class="btn" data-action="view" data-id="${p.id}">Ver</button>
-        <button class="btn btn-primary" data-action="add" data-id="${p.id}">Adicionar ao carrinho</button>
-      </div>
+      <img src="${product.image}" alt="${product.name}" class="product-image">
+      <h3>${product.name}</h3>
+      <p class="rarity">Raridade: ${product.rarity}</p>
+      <p class="price">R$ ${product.price.toFixed(2)}</p>
+      <button class="add-to-cart" data-id="${product.id}">Adicionar ao carrinho</button>
     `;
-    list.appendChild(card);
-  });
 
-  // Delegation
-  list.querySelectorAll('[data-action="add"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      addToCart(btn.dataset.id, 1);
-    });
-  });
-  list.querySelectorAll('[data-action="view"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const p = products.find(x => x.id === btn.dataset.id);
-      if(!p) return;
-      alert(`${p.name}\n\n${p.desc}\n\nPreço: R$ ${formatPrice(p.price)}`);
-    });
+    productList.appendChild(card);
   });
 }
 
-function addToCart(productId, qty = 1){
-  if(!cart[productId]) cart[productId] = 0;
-  cart[productId] += qty;
-  saveCart();
-  renderCart();
-  toast('Produto adicionado ao carrinho');
-}
+// ============================
+// 🔍 BUSCA DE PRODUTOS
+// ============================
+function filterProducts() {
+  const searchInput = document.getElementById("search").value.toLowerCase().trim();
+  const rarityFilter = document.getElementById("filter-rarity").value;
 
-function removeFromCart(productId){
-  delete cart[productId];
-  saveCart();
-  renderCart();
-}
-
-function changeQty(productId, qty){
-  qty = Number(qty) || 0;
-  if(qty <= 0) removeFromCart(productId);
-  else cart[productId] = qty;
-  saveCart();
-  renderCart();
-}
-
-function renderCart(){
-  const container = $('#cart-items');
-  container.innerHTML = '';
-  const entries = Object.entries(cart);
-  if(entries.length === 0){
-    container.innerHTML = `<div style="color:var(--muted)">Carrinho vazio</div>`;
-  } else {
-    entries.forEach(([id, qty]) => {
-      const p = products.find(x => x.id === id) || { name: id, price: 0 };
-      const item = document.createElement('div');
-      item.className = 'cart-item';
-      item.innerHTML = `
-        <div class="ci-thumb">${p.image ? `<img src="${p.image}" alt="${escapeHtml(p.name)}" style="max-width:100%;max-height:100%">` : '<svg width="40" height="30" viewBox="0 0 40 30" xmlns="http://www.w3.org/2000/svg"><rect width="40" height="30" fill="#081220"/></svg>'}</div>
-        <div class="ci-info">
-          <div style="font-weight:600">${escapeHtml(p.name)}</div>
-          <div style="color:var(--muted);font-size:0.9rem">R$ ${formatPrice(p.price)} × ${qty} = R$ ${formatPrice(p.price * qty)}</div>
-        </div>
-        <div class="ci-actions">
-          <input type="number" min="1" value="${qty}" data-id="${id}" class="qty-input" style="width:64px;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--muted)">
-          <button class="btn" data-remove="${id}">Remover</button>
-        </div>
-      `;
-      container.appendChild(item);
-    });
-
-    // attach listeners
-    container.querySelectorAll('[data-remove]').forEach(b => {
-      b.addEventListener('click', () => removeFromCart(b.dataset.remove));
-    });
-    container.querySelectorAll('.qty-input').forEach(inp => {
-      inp.addEventListener('change', () => changeQty(inp.dataset.id, inp.value));
-    });
-  }
-
-  updateSummary();
-  updateCartCount();
-}
-
-function updateSummary(){
-  let subtotal = 0;
-  Object.entries(cart).forEach(([id, qty]) => {
-    const p = products.find(x => x.id === id);
-    if(p) subtotal += p.price * qty;
+  const filtered = products.filter(product => {
+    const matchesName = product.name.toLowerCase().includes(searchInput);
+    const matchesRarity = rarityFilter === "" || product.rarity === rarityFilter;
+    return matchesName && matchesRarity;
   });
-  const shipping = subtotal > 0 && subtotal < 100 ? 12.00 : 0; // exemplo
-  const total = subtotal + shipping;
-  $('#subtotal').textContent = `R$ ${formatPrice(subtotal)}`;
-  $('#shipping').textContent = `R$ ${formatPrice(shipping)}`;
-  $('#total').textContent = `R$ ${formatPrice(total)}`;
+
+  displayProducts(filtered);
 }
 
-function updateCartCount(){
-  let count = 0;
-  Object.values(cart).forEach(q => count += Number(q));
-  $('#cart-count').textContent = count;
-}
+// ============================
+// 🛒 EVENTOS DE BUSCA E FILTRO
+// ============================
+document.getElementById("search").addEventListener("input", filterProducts);
+document.getElementById("filter-rarity").addEventListener("change", filterProducts);
 
-function saveCart(){
-  localStorage.setItem('skincart_v1', JSON.stringify(cart));
-}
-
-function loadCartFromStorage(){
-  try{
-    const raw = localStorage.getItem('skincart_v1');
-    if(raw) cart = JSON.parse(raw);
-  }catch(e){
-    cart = {};
-  }
-}
-
-// Checkout (simulado)
-function handleCheckout(e){
-  e.preventDefault();
-  const name = $('#buyer-name').value.trim();
-  const email = $('#buyer-email').value.trim();
-  const method = $('#payment-method').value;
-
-  if(!name || !email || !method){
-    toast('Preencha todos os campos do checkout.');
-    return;
-  }
-
-  const order = buildOrder(name, email, method);
-  // Em um site real, aqui você enviaria order para o servidor que chamaria o gateway de pagamento.
-  // Como este é um site estático, mostramos instruções simuladas.
-  $('#order-result').innerHTML = `
-    <strong>Pedido criado (simulado)</strong>
-    <div>ID do pedido: <code>${order.id}</code></div>
-    <div>Nome: ${escapeHtml(order.name)}</div>
-    <div>Email: ${escapeHtml(order.email)}</div>
-    <div>Método: ${escapeHtml(order.method)}</div>
-    <div>Total: <strong>R$ ${formatPrice(order.total)}</strong></div>
-    <div style="margin-top:8px;color:var(--muted)">Siga as instruções do seu provedor de pagamento para concluir a transação. (Este checkout é somente simulado.)</div>
-  `;
-  // limpar carrinho
-  cart = {};
-  saveCart();
-  renderCart();
-  // scroll pro resultado
-  $('#order-result').scrollIntoView({behavior:'smooth'});
-}
-
-function buildOrder(name, email, method){
-  const id = 'ORD-' + Date.now().toString(36).toUpperCase();
-  let subtotal = 0;
-  const items = [];
-  Object.entries(cart).forEach(([idp, qty]) => {
-    const p = products.find(x => x.id === idp) || { name: idp, price: 0 };
-    items.push({ id: idp, name: p.name, price: p.price, qty });
-    subtotal += p.price * qty;
-  });
-  const shipping = subtotal > 0 && subtotal < 100 ? 12 : 0;
-  const total = subtotal + shipping;
-  return {
-    id,
-    name,
-    email,
-    method,
-    items,
-    subtotal,
-    shipping,
-    total
-  };
-}
-
-// small utilities
-function formatPrice(v){
-  // garante duas casas
-  return Number(v).toFixed(2).replace('.', ',');
-}
-function escapeHtml(s){
-  if(!s) return '';
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function toast(msg){
-  // simples notificação
-  const el = document.createElement('div');
-  el.textContent = msg;
-  el.style.position = 'fixed';
-  el.style.right = '20px';
-  el.style.bottom = '20px';
-  el.style.background = 'rgba(0,0,0,0.6)';
-  el.style.color = '#fff';
-  el.style.padding = '10px 14px';
-  el.style.borderRadius = '8px';
-  el.style.zIndex = 9999;
-  document.body.appendChild(el);
-  setTimeout(()=> el.remove(), 2200);
-}
+// ============================
+// 💡 AO CARREGAR A PÁGINA
+// ============================
+document.addEventListener("DOMContentLoaded", () => {
+  displayProducts(products); // Mostra todas as skins inicialmente
+});
