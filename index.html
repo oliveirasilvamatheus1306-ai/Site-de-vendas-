@@ -1,28 +1,52 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SkinShop CS — Skins de Counter-Strike</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Loja fictícia de skins de Counter-Strike. Catálogo, carrinho e checkout simulado." />
+
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
-  <meta name="description" content="Loja de skins de Counter-Strike — catálogo, carrinho e checkout simulado." />
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" />
 </head>
+
 <body>
+  <!-- HEADER -->
   <header class="site-header">
-    <div class="container">
+    <div class="container header-content">
       <h1 class="logo">SkinShop CS</h1>
-      <nav>
-        <button id="btn-catalog" class="nav-btn">Catálogo</button>
-        <button id="btn-cart" class="nav-btn">Carrinho <span id="cart-count" class="badge">0</span></button>
+
+      <nav class="main-nav" aria-label="Navegação principal">
+        <button id="btn-catalog" class="nav-btn" aria-label="Ir para o catálogo">Catálogo</button>
+
+        <button id="btn-cart" class="nav-btn" aria-label="Abrir carrinho">
+          Carrinho <span id="cart-count" class="badge">0</span>
+        </button>
       </nav>
     </div>
   </header>
 
+  <!-- MAIN -->
   <main class="container main-grid">
-    <section id="catalog" class="catalog">
+
+    <!-- CATALOGO -->
+    <section id="catalog" class="catalog" aria-label="Catálogo de produtos">
+      
+      <!-- Barras de ferramentas -->
       <div class="toolbar">
-        <input id="search" type="search" placeholder="Buscar skin..." />
-        <select id="filter-rarity">
+        <input 
+          id="search" 
+          type="search" 
+          placeholder="Buscar skin..." 
+          aria-label="Buscar skin"
+        />
+
+        <select id="filter-rarity" aria-label="Filtrar por raridade">
           <option value="">Todas raridades</option>
           <option value="Mil-Spec">Mil-Spec</option>
           <option value="Restricted">Restricted</option>
@@ -31,49 +55,72 @@
           <option value="Contraband">Contraband</option>
         </select>
       </div>
+
+      <!-- Lista de produtos -->
       <div id="product-list" class="product-list">
-        <!-- cards serão injetados por script -->
+        <!-- Produtos serão carregados pelo script.js -->
       </div>
+
     </section>
 
-    <aside id="cart" class="cart">
+    <!-- CARRINHO -->
+    <aside id="cart" class="cart" aria-label="Carrinho de compras">
       <h2>Carrinho</h2>
-      <div id="cart-items" class="cart-items"></div>
+
+      <div id="cart-items" class="cart-items">
+        <!-- Itens do carrinho gerados via script -->
+      </div>
+
+      <!-- Resumo -->
       <div class="cart-summary">
         <div>Subtotal: <strong id="subtotal">R$ 0,00</strong></div>
         <div>Frete: <strong id="shipping">R$ 0,00</strong></div>
         <div class="total">Total: <strong id="total">R$ 0,00</strong></div>
       </div>
 
+      <!-- CHECKOUT -->
       <h3>Checkout</h3>
       <form id="checkout-form" class="checkout-form">
-        <label>Nome
-          <input type="text" id="buyer-name" required />
-        </label>
-        <label>Email
-          <input type="email" id="buyer-email" required />
-        </label>
-        <label>Método de pagamento
-          <select id="payment-method" required>
-            <option value="">Escolha</option>
-            <option value="pix">PIX (instruções após pedido)</option>
-            <option value="paypal">PayPal</option>
-            <option value="transfer">Transferência bancária</option>
-          </select>
-        </label>
-        <button type="submit" class="btn-primary">Finalizar pedido (simulado)</button>
+
+        <label for="buyer-name">Nome</label>
+        <input type="text" id="buyer-name" name="buyer-name" required />
+
+        <label for="buyer-email">Email</label>
+        <input type="email" id="buyer-email" name="buyer-email" required />
+
+        <label for="payment-method">Método de pagamento</label>
+        <select id="payment-method" name="payment-method" required>
+          <option value="">Escolha</option>
+          <option value="pix">PIX (instruções após pedido)</option>
+          <option value="paypal">PayPal</option>
+          <option value="transfer">Transferência bancária</option>
+        </select>
+
+        <button type="submit" class="btn-primary">
+          Finalizar pedido (simulado)
+        </button>
       </form>
 
       <div id="order-result" class="order-result" aria-live="polite"></div>
     </aside>
   </main>
 
+  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="container">
-      <small>© <span id="year"></span> SkinShop CS — Loja fictícia para demonstração. Verifique regras do Steam/Valve antes de comercializar.</small>
+      <small>
+        © <span id="year"></span> SkinShop CS — Loja fictícia para demonstração.  
+        Certifique-se das regras da Steam/Valve antes de comercializar skins reais.
+      </small>
     </div>
   </footer>
 
+  <!-- SCRIPT -->
   <script src="script.js"></script>
+  <script>
+    // Ano automático no footer
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
 </body>
 </html>
